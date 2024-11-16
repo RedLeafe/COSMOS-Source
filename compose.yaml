@@ -1,32 +1,36 @@
-# encoding: ascii-8bit
-
-# Copyright 2022 Ball Aerospace & Technologies Corp.
-# All Rights Reserved.
-#
+# encoding: ascii-8bit                                                
+                                                                      
+# Copyright 2022 Ball Aerospace & Technologies Corp.                  
+# All Rights Reserved.                                                
+#                                                                     
 # This program is free software; you can modify and/or redistribute it
-# under the terms of the GNU Affero General Public License
-# as published by the Free Software Foundation; version 3 with
-# attribution addendums as found in the LICENSE.txt
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# This program may also be used under the terms of a commercial or
-# enterprise edition license of COSMOS if purchased from the
-# copyright holder
-
-version: "3.5"
-
-services:
-  cosmos-minio:
+# under the terms of the GNU Affero General Public License            
+# as published by the Free Software Foundation; version 3 with        
+# attribution addendums as found in the LICENSE.txt                   
+#                                                                     
+# This program is distributed in the hope that it will be useful,     
+# but WITHOUT ANY WARRANTY; without even the implied warranty of      
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
+# GNU Affero General Public License for more details.                 
+#                                                                     
+# This program may also be used under the terms of a commercial or    
+# enterprise edition license of COSMOS if purchased from the          
+# copyright holder                                                    
+                                                                      
+#version: "3.5"                                                        
+                                                                      
+services:                                                             
+  cosmos-minio:                                                       
     image: "${COSMOS_REGISTRY}/ballaerospace/cosmosc2-minio:${COSMOS_TAG}"
     volumes:
       - "cosmos-minio-v:/data"
+      #- "./cacert.pem2:/data/config/env"
       - "./cacert.pem:/devel/cacert.pem"
     command: ["server", "/data"]
     restart: "unless-stopped"
+    privileged: true
+    ports:
+      - "9000:9000" # only allow localhost access to internal apis
     environment:
       MINIO_ROOT_USER: "${COSMOS_MINIO_USERNAME}"
       MINIO_ROOT_PASSWORD: "${COSMOS_MINIO_PASSWORD}"
@@ -41,7 +45,10 @@ services:
       - "cosmos-redis-v:/data"
       - "./cacert.pem:/devel/cacert.pem"
       - "./cosmos-redis/users.acl:/config/users.acl"
+    privileged: true
     restart: "unless-stopped"
+    ports:
+      - "6379:6379" # only allow localhost access to internal apis
     environment:
       SSL_CERT_FILE: "/devel/cacert.pem"
       CURL_CA_BUNDLE: "/devel/cacert.pem"
@@ -53,7 +60,10 @@ services:
     volumes:
       - "./cacert.pem:/devel/cacert.pem"
       - "./cosmos-redis/users.acl:/config/users.acl"
+    privileged: true
     restart: "unless-stopped"
+    ports:
+      - "6380:6380" # only allow localhost access to internal apis
     command: ["redis-server", "/config/redis_ephemeral.conf"]
     environment:
       SSL_CERT_FILE: "/devel/cacert.pem"
@@ -71,8 +81,11 @@ services:
     volumes:
       - "cosmos-gems-v:/gems"
       - "./cacert.pem:/devel/cacert.pem"
+    privileged: true
+    ports:
+      - "2901:2901" # only allow localhost access to internal apis
     environment:
-      - "RAILS_ENV=production"
+      - "RAILS_ENV=development"
       - "GEM_HOME=/gems"
     env_file:
       - ".env"
@@ -87,8 +100,11 @@ services:
     volumes:
       - "cosmos-gems-v:/gems:ro"
       - "./cacert.pem:/devel/cacert.pem"
+    privileged: true
+    ports:
+      - "2902:2902" # only allow localhost access to internal apis
     environment:
-      - "RAILS_ENV=production"
+      - "RAILS_ENV=development"
       - "GEM_HOME=/gems"
     env_file:
       - ".env"
@@ -105,6 +121,7 @@ services:
       #- ./cacert.pem:/devel/cacert.pem
       # Add access to the entire C drive on Windows
       # - "/c:/c"
+    privileged: true
     environment:
       - "GEM_HOME=/gems"
     env_file:
@@ -123,8 +140,8 @@ services:
       # - "./cosmos-traefik/cert.key:/etc/traefik/cert.key"
       # - "./cosmos-traefik/cert.crt:/etc/traefik/cert.crt"
     ports:
-      - "127.0.0.1:2900:80"
-      - "127.0.0.1:2943:443"
+      - "2900:80"
+      - "2943:443"
       # - "80:80"
       # - "443:443"
     restart: "unless-stopped"
@@ -132,6 +149,7 @@ services:
       - "cosmos-redis"
       - "cosmos-redis-ephemeral"
       - "cosmos-minio"
+    privileged: true
     environment:
       SSL_CERT_FILE: "/devel/cacert.pem"
       CURL_CA_BUNDLE: "/devel/cacert.pem"
@@ -149,6 +167,7 @@ services:
     volumes:
       - "cosmos-gems-v:/gems"
       - "./cacert.pem:/devel/cacert.pem"
+    privileged: true
     environment:
       - "GEM_HOME=/gems"
     env_file:

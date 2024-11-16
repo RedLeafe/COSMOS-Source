@@ -54,6 +54,7 @@ GOTO usage
 :startup
   CALL cosmos-control build || exit /b
   docker-compose -f compose.yaml up -d
+  FOR /F "usebackq tokens=*" %%i IN (`docker container ls ^| grep minio ^| cut -d" " -f1`) DO docker cp "C:\Users\Astrocat\COSMOS\.env" %%i:/data/config
   @echo off
 GOTO :EOF
 
