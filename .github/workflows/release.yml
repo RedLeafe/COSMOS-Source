@@ -53,7 +53,7 @@ jobs:
         working-directory: scripts/release
         env:
           COSMOS_RELEASE_VERSION: ${{ github.event.inputs.version }}
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[Github Action] Update version to ${{ github.event.inputs.version }}"
           tagging_message: "v${{ github.event.inputs.version }}"
@@ -95,6 +95,6 @@ jobs:
         working-directory: scripts/release
         env:
           COSMOS_RELEASE_VERSION: ${{ github.event.inputs.next_version }}
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[Github Action] Update version to ${{ github.event.inputs.next_version }}"
