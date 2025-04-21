@@ -8,7 +8,7 @@
 		"build": "webpack --mode=production"
 	},
 	"dependencies": {
-		"@rails/actioncable": "6.1.6",
+		"@rails/actioncable": "6.1.710",
 		"axios": "0.22.0",
 		"date-fns": "2.28.0",
 		"dotenv": "10.0.0",
